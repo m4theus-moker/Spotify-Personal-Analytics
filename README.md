@@ -1,63 +1,78 @@
 # 🎵 Spotify Personal Analytics
 
-> Um dashboard pessoal, offline e interativo que processa o seu histórico completo do Spotify, calcula o tempo total de escuta e gera gráficos detalhados sobre seus hábitos musicais ao longo dos anos.
-
----
-
-## 🔒 Isenção de Responsabilidade e Privacidade
-
-Este é um projeto de uso estritamente pessoal, acadêmico e de portfólio. A análise é realizada 100% offline a partir do arquivo oficial *Extended Streaming History* exportado pelo usuário, em total conformidade com as diretrizes do Spotify e sem risco de violação de cotas (*rate limits*) da API.
+> Um pipeline pessoal, 100% offline, que processa o histórico completo de streaming do Spotify (Extended Streaming History) e transforma os dados brutos em análises visuais sobre hábitos de escuta.
 
 ---
 
 ## 📌 Sobre o Projeto
 
-O **Spotify Personal Analytics** foi criado para quem quer ir além do resumo anual do *Spotify Wrapped* e explorar estatísticas completas de toda a sua trajetória na plataforma.
+Em vez de depender do resumo anual do *Spotify Wrapped* ou de requisições contínuas à API oficial (com risco de *rate limit*), este projeto consome diretamente o arquivo de **Extended Streaming History**, exportado pelo próprio usuário através da página de privacidade do Spotify.
 
-Ao invés de depender de requisições contínuas na API, a aplicação consome os dados históricos em JSON fornecidos pelo próprio Spotify. O sistema realiza o tratamento dos registros, calcula o tempo efetivo de escuta por dia, identifica seus top artistas e faixas, e consolida relatórios visuais interativos.
+O objetivo é extrair, tratar e visualizar o histórico de reprodução para responder perguntas como: quanto tempo eu realmente escuto música por ano/mês? Quais artistas e faixas dominam minha rotina? Em que horários e dias eu mais escuto?
 
 ---
 
-## 🚀 Funcionalidades
+## 🚀 Funcionalidades Implementadas
 
-- ⏱️ **Contabilização Precisa do Tempo:** Processa a minutagem real escutada por dia, mês e ano.
-- 📊 **Gráficos Interativos:** Exibe visualizações dinâmicas com os artistas mais ouvidos, histórico de faixas e comportamento de escuta.
-- ⏭️ **Análise de Disposição (Skip Rate):** Identifica a quantidade e porcentagem de músicas que foram puladas antes do fim.
-- 🕒 **Mapeamento de Horários (Heatmap):** Mostra os dias da semana e horários de maior consumo de áudio.
-- 💾 **Persistência Local (Opcional):** Estruturação dos dados em banco SQLite/PostgreSQL para consultas SQL customizadas.
+- 📂 **Extração automatizada:** leitura e unificação de todos os arquivos `Streaming_History_Audio_*.json` do export, mesmo quando divididos em múltiplos arquivos.
+- 🧹 **Tratamento de dados (ETL):** conversão de timestamps, cálculo de minutos efetivos de escuta (a partir de `ms_played`), remoção de registros sem faixa associada (ex: podcasts) e geração de colunas auxiliares de tempo (ano, mês, dia da semana, hora).
+- 📊 **Visualização:** gráfico de pizza interativo (Plotly) mostrando a distribuição de minutos escutados por ano.
+- 💾 **Exportação:** geração de um CSV tratado (`spotify_tratado.csv`), pronto para ser consumido em ferramentas de BI como Power BI.
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Linguagem:** Python 3.10+
-- **Processamento de Dados:** Pandas / NumPy
-- **Visualização:** Plotly / Matplotlib / Seaborn
-- **Dashboard Interativo:** Streamlit
-- **Banco de Dados:** SQLite
+- **Linguagem:** Python 3
+- **Processamento de dados:** Pandas
+- **Visualização:** Plotly Express
+- **Ambiente de desenvolvimento:** Google Colab
 
 ---
 
-## 🔧 Estrutura do Sistema
+## 🔧 Estrutura do Pipeline
 
-1. **Extração:** Consumo do histórico estendido (`Streaming_History_Audio_*.json`).
-2. **Tratamento (ETL):** Conversão de milissegundos em minutos/horas, unificação de arquivos e limpeza de dados via Pandas.
-3. **Persistência:** Modelagem relacional das reproduções em SQLite para consultas SQL de alta performance.
-4. **Visualização:** Renderização do dashboard web local com métricas e filtros temporais usando Streamlit.
+1. **Upload e extração** do arquivo `.zip` do Extended Streaming History diretamente no Colab.
+2. **Leitura** de todos os arquivos JSON (`Streaming_History_Audio_*.json`) e unificação em um único DataFrame.
+3. **Tratamento:**
+   - Conversão de `ts` para datetime
+   - Conversão de `ms_played` para minutos
+   - Seleção das colunas relevantes (faixa, artista, álbum, tempo de escuta, motivo de término, se foi pulada, se estava em shuffle)
+   - Remoção de registros inválidos
+   - Criação de colunas de ano, mês, dia da semana e hora
+4. **Visualização** dos minutos escutados por ano em gráfico de pizza.
+5. **Exportação** para CSV, com encoding compatível (`utf-8-sig`) para uso direto no Power BI ou Excel.
 
 ---
 
-## 📥 Como Obter Seus Dados
+## 📥 Como Obter os Dados
 
-1. Acesse a página de privacidade da sua conta no Spotify: [spotify.com/account/privacy](https://www.spotify.com/account/privacy/).
-2. Na seção **Download dos seus dados**, marque a opção **Histórico de reprodução estendido**.
-3. Confirme o pedido no seu e-mail e aguarde o envio do arquivo compactado pelo Spotify.
+1. Acesse [spotify.com/account/privacy](https://www.spotify.com/account/privacy/).
+2. Na seção "Download dos seus dados", solicite o **Histórico de reprodução estendido** (Extended Streaming History).
+3. Aguarde o e-mail do Spotify com o arquivo compactado (pode levar até 30 dias).
 
 ---
 
 ## 💻 Como Executar
 
-### 1. Clonar o repositório
-```bash
-git clone [https://github.com/seu-usuario/spotify-personal-analytics.git](https://github.com/seu-usuario/spotify-personal-analytics.git)
-cd spotify-personal-analytics
+1. Abra o notebook no Google Colab.
+2. Rode a célula de upload e selecione o `.zip` recebido do Spotify.
+3. Execute as células em sequência (extração → tratamento → visualização → exportação).
+4. O arquivo `spotify_tratado.csv` será gerado e baixado automaticamente, pronto para uso em outras ferramentas.
+
+---
+
+## 🔭 Próximos Passos
+
+- [ ] Gráficos de top artistas e top faixas
+- [ ] Análise de taxa de músicas puladas (*skip rate*)
+- [ ] Heatmap de horários/dias de maior consumo
+- [ ] Persistência em banco SQLite para consultas SQL
+- [ ] Dashboard interativo com Streamlit
+- [ ] Exportações adicionais agregadas (por mês, por artista) para uso em Power BI
+
+---
+
+## ⚠️ Nota sobre Privacidade
+
+Este projeto é de uso estritamente pessoal, acadêmico e de portfólio. Todo o processamento é feito localmente/offline a partir de um arquivo exportado pelo próprio usuário, sem qualquer chamada à API do Spotify — em total conformidade com as diretrizes de uso de dados da plataforma.
