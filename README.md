@@ -22,6 +22,7 @@ O objetivo é extrair, tratar e visualizar o histórico de reprodução para res
 - 🏆 **Top artistas e faixas:** gráficos de barras com os 15 artistas e as 15 faixas mais escutados (em horas/minutos).
 - ⏭️ **Análise de skip rate:** identificação dos artistas mais pulados, combinando os campos `skipped` e `reason_end`, com mínimo de 50 plays para evitar distorções.
 - - 🗄️ **Persistência em SQLite:** armazenamento do histórico tratado em `spotify.db` (tabela `streams`) e de um resumo por artista (tabela `resumo_artistas`), pronto para consultas SQL.
+  - - 🕐 **Escuta por hora e dia da semana:** gráficos de barras mostrando em quais horas do dia e em quais dias da semana você mais escuta música (já no fuso `America/Sao_Paulo`).
 
 ---
 
