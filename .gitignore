@@ -1,0 +1,6 @@
+data/
+*.db
+*.csv
+spotify_extended/
+.venv/
+__pycache__/
