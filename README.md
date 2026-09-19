@@ -21,6 +21,7 @@ O objetivo é extrair, tratar e visualizar o histórico de reprodução para res
 - 🕒 **Ajuste de fuso horário:** conversão dos timestamps de UTC para `America/Sao_Paulo`, para que as análises por hora e dia da semana reflitam o horário real de escuta.
 - 🏆 **Top artistas e faixas:** gráficos de barras com os 15 artistas e as 15 faixas mais escutados (em horas/minutos).
 - ⏭️ **Análise de skip rate:** identificação dos artistas mais pulados, combinando os campos `skipped` e `reason_end`, com mínimo de 50 plays para evitar distorções.
+- - 🗄️ **Persistência em SQLite:** armazenamento do histórico tratado em `spotify.db` (tabela `streams`) e de um resumo por artista (tabela `resumo_artistas`), pronto para consultas SQL.
 
 ---
 
@@ -30,6 +31,7 @@ O objetivo é extrair, tratar e visualizar o histórico de reprodução para res
 - **Processamento de dados:** Pandas
 - **Visualização:** Plotly Express
 - **Ambiente de desenvolvimento:** Google Colab
+- - **Banco de dados:** SQLite
 
 ---
 
@@ -46,7 +48,8 @@ O objetivo é extrair, tratar e visualizar o histórico de reprodução para res
    - Criação da coluna `pulada` (combinando `skipped` e `reason_end == 'fwdbtn'`)
 4. **Visualização** dos minutos escutados por ano em gráfico de pizza.
 5. **Análises:** top artistas, top faixas e skip rate por artista.
-6. **Exportação** para CSV, com encoding compatível (`utf-8-sig`) para uso direto no Power BI ou Excel.
+6. **Persistência** em banco SQLite (`spotify.db`) com a tabela completa e um resumo agregado por artista.
+7. **Exportação** para CSV, com encoding compatível (`utf-8-sig`) para uso direto no Power BI ou Excel.
 
 ---
 
@@ -72,7 +75,7 @@ O objetivo é extrair, tratar e visualizar o histórico de reprodução para res
 - [x] Gráficos de top artistas e top faixas
 - [x] Análise de taxa de músicas puladas (*skip rate*)
 - [ ] Heatmap de horários/dias de maior consumo
-- [ ] Persistência em banco SQLite para consultas SQL
+- [x] Persistência em banco SQLite para consultas SQL
 - [ ] Dashboard interativo com Streamlit
 - [ ] Exportações adicionais agregadas (por mês, por artista) para uso em Power BI
 
