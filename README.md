@@ -74,7 +74,7 @@ O objetivo é extrair, tratar e visualizar o histórico de reprodução para res
 
 - [x] Gráficos de top artistas e top faixas
 - [x] Análise de taxa de músicas puladas (*skip rate*)
-- [ ] Heatmap de horários/dias de maior consumo
+- [x] Heatmap de horários/dias de maior consumo
 - [x] Persistência em banco SQLite para consultas SQL
 - [ ] Dashboard interativo com Streamlit
 - [ ] Exportações adicionais agregadas (por mês, por artista) para uso em Power BI
