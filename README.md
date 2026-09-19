@@ -66,7 +66,7 @@ O objetivo é extrair, tratar e visualizar o histórico de reprodução para res
 1. Abra o notebook no Google Colab.
 2. Rode a célula de upload e selecione o `.zip` recebido do Spotify.
 3. Execute as células em sequência (extração → tratamento → visualização → exportação).
-4. O arquivo `spotify_tratado.csv` será gerado e baixado automaticamente, pronto para uso em outras ferramentas.
+4. 4. Os arquivos `spotify_tratado.csv` e `spotify.db` ficam disponíveis para uso em outras ferramentas.
 
 ---
 
