@@ -23,7 +23,9 @@ O objetivo é extrair, tratar e visualizar o histórico de reprodução para res
 - ⏭️ **Análise de skip rate:** identificação dos artistas mais pulados, combinando os campos `skipped` e `reason_end`, com mínimo de 50 plays para evitar distorções.
 - - 🗄️ **Persistência em SQLite:** armazenamento do histórico tratado em `spotify.db` (tabela `streams`) e de um resumo por artista (tabela `resumo_artistas`), pronto para consultas SQL.
   - - 🕐 **Escuta por hora e dia da semana:** gráficos de barras mostrando em quais horas do dia e em quais dias da semana você mais escuta música (já no fuso `America/Sao_Paulo`).
-
+- 🗄️ **Persistência em SQLite:** histórico tratado em `spotify.db` (tabelas `streams` e `resumo_artistas`) para consultas em SQL.
+- 🖥️ **Dashboard interativo (Streamlit):** filtros por ano, rankings configuráveis e abas com visão geral, artistas/faixas e hábitos de escuta.
+- 🔎 **Análises em SQL:** perguntas respondidas com CTEs e funções de janela (`LAG`, `RANK`), documentadas em [analise.md](analise.md).
 ---
 
 ## 🛠️ Tecnologias Utilizadas
@@ -33,6 +35,8 @@ O objetivo é extrair, tratar e visualizar o histórico de reprodução para res
 - **Visualização:** Plotly Express
 - **Ambiente de desenvolvimento:** Google Colab
 - - **Banco de dados:** SQLite
+- - **Banco de dados:** SQLite
+- **Dashboard:** Streamlit
 
 ---
 
@@ -66,12 +70,24 @@ O objetivo é extrair, tratar e visualizar o histórico de reprodução para res
 
 ![Dashboard](imagens/dashboard.png)
 
+## 📊 O que os dados mostraram
+
+- **47,4%** dos plays duram menos de 30 s, mas representam só **3%** das horas escutadas.
+- Só **33,9%** das faixas são ouvidas até o fim.
+- O artista mais ouvido concentra **17,4%** das 4.408,9 horas e foi o nº 1 em **32 dos 38 meses**.
+
+Detalhes, consultas e conclusões em [analise.md](analise.md).
+
 ## 💻 Como Executar
 
 1. Abra o notebook no Google Colab.
 2. Rode a célula de upload e selecione o `.zip` recebido do Spotify.
 3. Execute as células em sequência (extração → tratamento → visualização → exportação).
 4. 4. Os arquivos `spotify_tratado.csv` e `spotify.db` ficam disponíveis para uso em outras ferramentas.
+### Dashboard local
+1. Gere o `spotify.db` rodando o notebook e coloque-o em `data/`.
+2. `pip install -r requirements.txt`
+3. `python -m streamlit run app.py`
 
 ---
 
@@ -81,7 +97,7 @@ O objetivo é extrair, tratar e visualizar o histórico de reprodução para res
 - [x] Análise de taxa de músicas puladas (*skip rate*)
 - [x] Heatmap de horários/dias de maior consumo
 - [x] Persistência em banco SQLite para consultas SQL
-- [ ] Dashboard interativo com Streamlit
+- [x] Dashboard interativo com Streamlit
 - [ ] Exportações adicionais agregadas (por mês, por artista) para uso em Power BI
 
 ---
