@@ -42,12 +42,25 @@ def top_faixas(df, n=15):
 def skip_rate(df, min_plays=50, n=15):
     stats = df.groupby('artista').agg(plays=('faixa', 'count'),
                                       skip_rate=('pulada', 'mean'))
-    stats = stats[stats['plays'] >= min_plays].sort_values(
-        'skip_rate', ascending=False).head(n).reset_index()
-    return px.bar(stats.sort_values('skip_rate'), x='skip_rate', y='artista',
-                  orientation='h',
-                  title=f'Artistas mais pulados (mín. {min_plays} plays)')
+    stats = (stats[stats['plays'] >= min_plays]
+             .sort_values(['skip_rate', 'plays'], ascending=False)
+             .head(n).reset_index())
+    fig = px.bar(stats.sort_values(['skip_rate', 'plays']),
+                 x='skip_rate', y='artista', orientation='h',
+                 hover_data=['plays'],
+                 labels={'skip_rate': 'Taxa de skip', 'artista': 'Artista'},
+                 title=f'Artistas mais pulados (mín. {min_plays} plays)')
+    fig.update_xaxes(tickformat='.0%')
+    return fig
 
+def evolucao_mensal(df):
+    d = df.copy()
+    d['periodo'] = d['ano'].astype(str) + '-' + d['mes'].astype(str).str.zfill(2)
+    mensal = d.groupby('periodo')['min_played'].sum().reset_index()
+    mensal['horas'] = mensal['min_played'] / 60
+    return px.line(mensal, x='periodo', y='horas', markers=True,
+                   labels={'periodo': 'Mês', 'horas': 'Horas escutadas'},
+                   title='Horas escutadas por mês')
 
 def por_hora(df):
     dados = df.groupby('hora')['min_played'].sum().reset_index()
