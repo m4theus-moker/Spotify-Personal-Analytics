@@ -69,7 +69,7 @@ def por_hora(df):
                  labels={'hora': 'Hora do dia', 'horas': 'Horas escutadas'},
                  title='Em que horas você mais escuta')
     fig.update_xaxes(dtick=1)
-    return fig
+    return fig  
 
 
 def por_dia_semana(df):
