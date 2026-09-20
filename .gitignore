@@ -4,3 +4,4 @@ data/
 spotify_extended/
 .venv/
 __pycache__/
+*.zip
