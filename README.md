@@ -62,6 +62,10 @@ O objetivo é extrair, tratar e visualizar o histórico de reprodução para res
 
 ---
 
+## 📸 Prévia
+
+![Dashboard](imagens/dashboard.png)
+
 ## 💻 Como Executar
 
 1. Abra o notebook no Google Colab.
