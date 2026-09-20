@@ -36,7 +36,8 @@ Detalhes, consultas e conclusões em [analise.md](analise.md).
 - 🏆 **Top artistas e faixas:** gráficos de barras com os artistas e as faixas mais escutados (em horas/minutos).
 - ⏭️ **Análise de skip rate:** artistas mais pulados, com base no campo `skipped` do Spotify (que inclui o botão de próxima, o `endplay` e o botão de voltar) e com mínimo de plays configurável para evitar distorções.
 - 🕐 **Escuta por hora e dia da semana:** gráficos de barras mostrando em quais horas do dia e em quais dias da semana a escuta se concentra.
-- 🗄️ **Persistência em SQLite:** histórico tratado em `spotify.db` (tabelas `streams` e `resumo_artistas`) para consultas em SQL.
+- 🗄️ **Persistência em SQLite:** histórico tratado em `spotify.db` para consultas em SQL.
+- 🏅 **ETL em camadas (arquitetura medalhão):** o `etl.py` gera no `spotify.db` as camadas bronze (dado bruto), silver (dado limpo) e gold (tabelas agregadas), com as agregações feitas em SQL.
 - 🔎 **Análises em SQL:** perguntas respondidas com CTEs e funções de janela (`LAG`, `RANK`), documentadas em [analise.md](analise.md).
 - 🖥️ **Dashboard interativo (Streamlit):** filtros por ano, rankings configuráveis e abas com visão geral, artistas/faixas e hábitos de escuta.
 - 💾 **Exportação:** geração de um CSV tratado (`spotify_tratado.csv`), pronto para ser consumido em ferramentas de BI como Power BI.
@@ -50,7 +51,7 @@ Detalhes, consultas e conclusões em [analise.md](analise.md).
 - **Banco de dados:** SQLite
 - **Visualização:** Plotly Express
 - **Dashboard:** Streamlit
-- **Ambiente de desenvolvimento:** Google Colab (ETL e exploração) e VS Code (dashboard e SQL)
+- **Ambiente de desenvolvimento:** Google Colab (exploração inicial) e VS Code (ETL, dashboard e SQL)
 
 ---
 
@@ -72,6 +73,20 @@ Detalhes, consultas e conclusões em [analise.md](analise.md).
 
 ---
 
+## 🏅 Arquitetura em Camadas (Medalhão)
+
+O `etl.py` organiza o `data/spotify.db` em três camadas, da mais bruta à mais pronta para uso:
+
+| Camada | Tabelas | O que guarda |
+|---|---|---|
+| **Bronze** | `bronze_streams` | Dado bruto, como veio nos JSONs (sem as colunas de IP, por privacidade) |
+| **Silver** | `silver_streams` | Dado limpo: fuso `America/Sao_Paulo`, colunas padronizadas, sem podcasts, com as flags `pulada`, `ouvida_ate_o_fim` e `play_valido` |
+| **Gold** | `gold_resumo_artistas`, `gold_horas_mensais`, `gold_artista_mes` | Tabelas agregadas em SQL, prontas para dashboard e BI |
+
+A view `streams` aponta para a silver, então o dashboard e as consultas de `sql/consultas.sql` usam esse nome. O script reconstrói o banco do zero a cada execução, e o `.zip` original nunca é alterado.
+
+---
+
 ## 📥 Como Obter os Dados
 
 1. Acesse [spotify.com/account/privacy](https://www.spotify.com/account/privacy/).
@@ -82,18 +97,17 @@ Detalhes, consultas e conclusões em [analise.md](analise.md).
 
 ## 💻 Como Executar
 
-### 1. Gerar o banco de dados (notebook)
+### 1. Gerar o banco de dados
 
-1. Abra o notebook no Google Colab.
-2. Rode a célula de upload e selecione o `.zip` recebido do Spotify.
-3. Execute as células em sequência (extração → tratamento → visualização → persistência → exportação).
-4. Baixe os arquivos gerados: `spotify.db` e `spotify_tratado.csv`.
+1. Coloque o `.zip` do Extended Streaming History na pasta `data/` do projeto (ela não vai para o GitHub, porque contém dados pessoais).
+2. Crie e ative o ambiente virtual, e instale as dependências: `pip install -r requirements.txt`
+3. Rode o ETL: `python etl.py "data/nome-do-arquivo.zip"`
+
+O script extrai só os arquivos de histórico de áudio e gera o `data/spotify.db` com as camadas bronze, silver e gold. (O notebook `spotify_personal_analytics.py`, feito no Google Colab, é a versão exploratória do mesmo tratamento e também gera o CSV `spotify_tratado.csv` para uso no Power BI.)
 
 ### 2. Rodar o dashboard local
 
-1. Coloque o `spotify.db` na pasta `data/` do projeto (ela não vai para o GitHub, porque contém dados pessoais).
-2. Instale as dependências: `pip install -r requirements.txt`
-3. Inicie o dashboard: `python -m streamlit run app.py`
+`python -m streamlit run app.py`
 
 ---
 
@@ -103,7 +117,8 @@ Detalhes, consultas e conclusões em [analise.md](analise.md).
 - `analises.py`: funções que geram cada gráfico
 - `sql/consultas.sql`: consultas SQL usadas na análise
 - `analise.md`: perguntas, resultados e conclusões
-- `spotify_personal_analytics.py`: código do notebook (ETL)
+- `etl.py`: ETL em camadas (bronze, silver e gold) que gera o `spotify.db`
+- `spotify_personal_analytics.py`: código do notebook exploratório (Colab)
 - `requirements.txt`: dependências do projeto
 
 ---
@@ -116,8 +131,8 @@ Detalhes, consultas e conclusões em [analise.md](analise.md).
 - [x] Persistência em banco SQLite para consultas SQL
 - [x] Dashboard interativo com Streamlit
 - [x] Análises em SQL documentadas
-- [ ] ETL em camadas (arquitetura medalhão: bronze, silver e gold) em um `etl.py` local
-- [ ] Dashboard: filtro de plays válidos (30 s ou mais) e métrica de faixas ouvidas até o fim
+- [x] ETL em camadas (arquitetura medalhão: bronze, silver e gold) em um `etl.py` local
+- [ ] Dashboard lendo as tabelas gold, com filtro de plays válidos (30 s ou mais) e métrica de faixas ouvidas até o fim
 - [ ] Exportações agregadas (por mês, por artista) e dashboard no Power BI
 
 ---
