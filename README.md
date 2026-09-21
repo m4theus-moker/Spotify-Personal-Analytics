@@ -16,6 +16,8 @@ O objetivo é extrair, tratar e visualizar o histórico de reprodução para res
 
 ![Dashboard](imagens/dashboard.png)
 
+![Artista mais ouvido de cada mês](imagens/dashboard-artista-mes.png)
+
 ---
 
 ## 📊 O que os dados mostraram
@@ -39,7 +41,7 @@ Detalhes, consultas e conclusões em [analise.md](analise.md).
 - 🗄️ **Persistência em SQLite:** histórico tratado em `spotify.db` para consultas em SQL.
 - 🏅 **ETL em camadas (arquitetura medalhão):** o `etl.py` gera no `spotify.db` as camadas bronze (dado bruto), silver (dado limpo) e gold (tabelas agregadas), com as agregações feitas em SQL.
 - 🔎 **Análises em SQL:** perguntas respondidas com CTEs e funções de janela (`LAG`, `RANK`), documentadas em [analise.md](analise.md).
-- 🖥️ **Dashboard interativo (Streamlit):** filtros por ano, rankings configuráveis e abas com visão geral, artistas/faixas e hábitos de escuta.
+- 🖥️ **Dashboard interativo (Streamlit):** lê as tabelas gold do `spotify.db`, com filtros por ano, ranking configurável, opção de ignorar plays de menos de 30 s, e abas de visão geral (plays por duração, horas por dia e artista mais ouvido de cada mês), artistas/faixas (com skip rate) e hábitos de escuta.
 - 💾 **Exportação:** geração de um CSV tratado (`spotify_tratado.csv`), pronto para ser consumido em ferramentas de BI como Power BI.
 
 ---
@@ -132,8 +134,8 @@ O script extrai só os arquivos de histórico de áudio e gera o `data/spotify.d
 - [x] Dashboard interativo com Streamlit
 - [x] Análises em SQL documentadas
 - [x] ETL em camadas (arquitetura medalhão: bronze, silver e gold) em um `etl.py` local
-- [ ] Dashboard lendo as tabelas gold, com filtro de plays válidos (30 s ou mais) e métrica de faixas ouvidas até o fim
-- [ ] Exportações agregadas (por mês, por artista) e dashboard no Power BI
+- [x] Dashboard lendo as tabelas gold, com filtro de plays válidos (30 s ou mais) e métrica de faixas ouvidas até o fim
+- [ ] Dashboard no Power BI com o `spotify_tratado.csv`
 
 ---
 
